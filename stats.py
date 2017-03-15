@@ -24,23 +24,26 @@ start = time.time()
 print('Start')
 
 df = pd.read_csv('train.csv')
+# df = pd.read_csv('validation.csv')
 
 advertisers = list(set(df['advertiser']))
 
 n = len(df)
 
 print('\nStats:')
-print('Advertiser\tImps\t\tClicks\t\tCost\t\tCTR\t\tCPM\t\teCPC')
+print('Advertiser\tImps\t\tClicks\t\tCost\t\tCTR\t\tCPM\t\tCPC\t\teCPC')
 
 for advertiser in advertisers:
     rows = df[df['advertiser']==advertiser]
     imps = len(rows)  # imps = number of impressions
     clicks = len(rows[rows['click']==1])
-    cost = sum(rows['payprice'].values)
+    totalCost = sum(rows['payprice'].values)
+    clickedCost = sum(rows[rows['click']==1]['payprice'].values)
     ctr = 100 * float(clicks) / float(imps)  # ctr = click through rate
-    cpm = float(cost) / float(imps) / float(1000)  # cpm = cost per mille = cost per 1000 impressions
-    ecpc = float(cost) / float(clicks)
-    print('{} \t\t{} \t\t{} \t\t{} \t{:.3f}% \t\t{:.3f} \t\t{:.2f}'.format(advertiser, imps, clicks, cost, ctr, cpm, ecpc))
+    cpm = float(totalCost) / float(imps) / float(1000)  # cpm = cost per mille = cost per 1000 impressions
+    cpc = float(totalCost) / float(clicks)
+    ecpc = float(clickedCost) / float(clicks)
+    print('{} \t\t{} \t\t{} \t\t{}  \t{:.3f}% \t\t{:.3f} \t\t{:.2f} \t{:.2f}'.format(advertiser, imps, clicks, totalCost, ctr, cpm, cpc, ecpc))
 
 print('\nAvg CTR by day:')
 print('Advertiser\tMon\t\tTue\t\tWed\t\tThu\t\tFri\t\tSat\t\tSun')
