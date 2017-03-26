@@ -45,6 +45,26 @@ for advertiser in advertisers:
     ecpc = float(clickedCost) / float(clicks)
     print('{} \t\t{} \t\t{} \t\t{}  \t{:.3f}% \t\t{:.3f} \t\t{:.2f} \t{:.2f}'.format(advertiser, imps, clicks, totalCost, ctr, cpm, cpc, ecpc))
 
+out = open('region_stats.txt', 'w')
+regions = list(set(df['region']))
+out.write('\nAvg CTR by region:\n')
+
+for advertiser in advertisers:
+    out.write('{}\t\t'.format(advertiser))
+    for region in regions:
+        rows = df[(df['advertiser']==advertiser) & (df['region']==region)]
+        imps = len(rows)  # imps = number of impressions
+        clicks = len(rows[rows['click']==1])
+        if imps>0:
+            ctr = 100 * float(clicks) / float(imps)  # ctr = click through rate
+            out.write('{:.3f}%\t\t'.format(ctr))
+        else:
+            ctr = '-'
+            out.write('{}\t\t'.format(ctr))
+    out.write('\n')
+    out.flush()
+out.close()
+
 print('\nAvg CTR by day:')
 print('Advertiser\tMon\t\tTue\t\tWed\t\tThu\t\tFri\t\tSat\t\tSun')
 
