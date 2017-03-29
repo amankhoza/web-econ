@@ -1,21 +1,12 @@
 import pandas as pd
 import time
-import os
-import sys
+from helperFunctions import evaluateBiddingStrategy as evaluate
+from helperFunctions import progress as progress
+from helperFunctions import clearTerminal as clearTerminal
 
 start = time.clock()
 
-os.system('reset')
-
-def progress(count, total, status='Complete'):
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
+clearTerminal()
 
 def training(csv):
 	advertisers = list(set(csv['advertiser']))
@@ -70,6 +61,7 @@ def testFunc(trainResults, csv):
 	for advertiser in advertisers:
 		sums[advertiser] = float(0)
 
+	predictedBidPrices = {}
 	data = {}
 	data['bidid'] = []
 	data['bidprice'] = []
@@ -77,7 +69,7 @@ def testFunc(trainResults, csv):
 	n = len(csv)
 
 	for i in range(0, n):
-		progress(i, n)
+		progress(i+1, n)
 		slotprice = csv.loc[i]['slotprice']
 		advertiser = csv.loc[i]['advertiser']
 		bidid = csv.loc[i]['bidid']
@@ -89,10 +81,12 @@ def testFunc(trainResults, csv):
 		data['bidid'].append(bidid)
 		data['bidprice'].append(trainResults[advertiser][slotprice])
 
+		predictedBidPrices[bidid] = bidprice
+
 	print 'Done Testing'
 	print sums
 
-	return data
+	return data, predictedBidPrices
 
 def saveToFile(data):
 
@@ -109,7 +103,9 @@ validation = pd.read_csv('data/validation.csv')
 
 print 'Done Loading Files'
 
-validate(training(train), validation)
-#saveToFile(testFunc(training(train), test))
+#validate(training(train), validation)
+#saveToFile(testFunc(training(train), test)[0])
+predictedBidPrices = testFunc(training(train), validation)[1]
+evaluate(predictedBidPrices, 'data/validation.csv', 25000)
 
 print 'Time Taken: ' + ("%.2f" % (time.clock() - start)) + 's'
