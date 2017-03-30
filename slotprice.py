@@ -2,22 +2,28 @@ import pandas as pd
 import time
 from helperFunctions import evaluateBiddingStrategy as evaluate
 from helperFunctions import progress as progress
-from helperFunctions import clearTerminal as clearTerminal
+from helperFunctions import clearTerminal as clear
 
 start = time.clock()
 
-clearTerminal()
+clear()
+
+print 'Slotprice Method'
 
 def training(csv):
+	print 'Training:'
 	advertisers = list(set(csv['advertiser']))
 
 	data = {}
 
 	for advertiser in advertisers:
+		print advertiser
+
 		data[advertiser] = {}
 		advertiserRows = csv[(csv['advertiser'] == advertiser)]
 
 		for slotprice in range(0, 400):
+			progress (slotprice + 1, 400)
 
 			rows = advertiserRows[(advertiserRows['slotprice'] == slotprice)]
 			if len(rows) > 0:
@@ -25,43 +31,14 @@ def training(csv):
 			else:
 				data[advertiser][slotprice] = float(0)
 
-	print 'Done Training'
-
-	return data
-
-def validate(trainResults, csv):
-	advertisers = list(set(csv['advertiser']))
-
-	data = {}
-
-	for advertiser in advertisers:
-		data[advertiser] = {}
-
-		advertiserRows = csv[(csv['advertiser'] == advertiser)]
-
-		bought = int(0)
-
-		for slotprice in range(0, 400):
-			rows = advertiserRows[(advertiserRows['slotprice'] == slotprice)]
-
-			# exact = rows[(rows['bidprice'] <= trainResults[advertiser][slotprice] + 1) & (rows['bidprice'] >= trainResults[advertiser][slotprice] - 1)]
-			exact = rows[(rows['bidprice'] == trainResults[advertiser][slotprice] )]
-
-			bought += len(exact)
-
-		data[advertiser] = 100 * float(bought) / float(len(advertiserRows))
-		print repr(advertiser) + ': ' + '%.2f' % data[advertiser] + '%'
-
 	return data
 
 def testFunc(trainResults, csv):
-	advertisers = list(set(csv['advertiser']))
+	print 'Testing:'
+
 	sums = {}
 
-	for advertiser in advertisers:
-		sums[advertiser] = float(0)
-
-	predictedBidPrices = {}
+	bidprices = {}
 	data = {}
 	data['bidid'] = []
 	data['bidprice'] = []
@@ -69,43 +46,40 @@ def testFunc(trainResults, csv):
 	n = len(csv)
 
 	for i in range(0, n):
-		progress(i+1, n)
-		slotprice = csv.loc[i]['slotprice']
-		advertiser = csv.loc[i]['advertiser']
-		bidid = csv.loc[i]['bidid']
+		progress(i + 1, n)
+
+		slotprice = csv.slotprice.values[i]
+		advertiser = csv.advertiser.values[i]
+		bidid = csv.bidid.values[i]
 
 		bidprice = trainResults[advertiser][slotprice]
 
-		sums[advertiser] += bidprice
-
 		data['bidid'].append(bidid)
-		data['bidprice'].append(trainResults[advertiser][slotprice])
+		data['bidprice'].append(bidprice)
 
-		predictedBidPrices[bidid] = bidprice
+		bidprices[bidid] = bidprice
 
-	print 'Done Testing'
-	print sums
+	return data, bidprices
 
-	return data, predictedBidPrices
-
-def saveToFile(data):
-
-	# Convert Dictionary to DataFrame then save as CSV
+def saveToFile(data, file):
 
 	output = pd.DataFrame.from_dict(data)
-	output.to_csv("data/result.csv")
+	output.to_csv(file)
 
 	return
 
-train = pd.read_csv('data/train.csv')
-validation = pd.read_csv('data/validation.csv')
-#test = pd.read_csv('data/test.csv')
+print 'Loading:'
 
-print 'Done Loading Files'
+test = pd.read_csv('data/datasets/test.csv')
+train = pd.read_csv('data/datasets/train.csv')
+validation = pd.read_csv('data/datasets/validation.csv')
 
-#validate(training(train), validation)
-#saveToFile(testFunc(training(train), test)[0])
-predictedBidPrices = testFunc(training(train), validation)[1]
-evaluate(predictedBidPrices, 'data/validation.csv', 25000)
+trainResults = training(train)
+
+#testResults = testFunc(trainResults, test)[0]
+bidprices = testFunc(trainResults, validation)[1]
+
+#saveToFile(testResults, 'data/submissions/test.csv')
+evaluate(bidprices, 'data/datasets/validation.csv', 25000)
 
 print 'Time Taken: ' + ("%.2f" % (time.clock() - start)) + 's'
