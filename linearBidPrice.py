@@ -5,6 +5,7 @@ from helperFunctions import evaluateBiddingStrategy as evaluate
 from helperFunctions import progress as progress
 from helperFunctions import clearTerminal as clearTerminal
 from helperFunctions import printElapsedTime as printElapsedTime
+from logisticRegression import getPCTRS
 
 
 def train(training_set, lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
@@ -45,20 +46,25 @@ def train(training_set, lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
 
 
 def predict(base_bidprices, validation_set):
-    print('Predicting bid prices using linear bidding strategy model:')
     bids = {}
     validationDF = pd.read_csv(validation_set)
 
     n = len(validationDF)
 
-    pCTR = 1  # NEED TO CALCULATE THIS SOMEHOW
-    avgCTR = 1  # NEED TO CALCULATE THIS SOMEHOW
+    print('Calculating pCTRs using logistic regression:')
+    pctrs = getPCTRS('train.csv', 'validation.csv')
 
+    print('Calculating avgCTR:')
+    imps = len(validationDF)  # imps = number of impressions
+    clicks = len(validationDF[validationDF['click']==1])
+    avgCTR = clicks / imps  # ctr = click through rate
+
+    print('Predicting bid prices using linear bidding strategy model:')
     for i in range(0, n):
         progress(i+1, n)
         bidid = validationDF.bidid.values[i]
         advertiser = validationDF.advertiser.values[i]
-        baseBidPrice = int(base_bidprices[advertiser] * pCTR / avgCTR)
+        baseBidPrice = int(base_bidprices[advertiser] * pctrs[i] / avgCTR)
         bids[bidid] = baseBidPrice
 
     return bids
