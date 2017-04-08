@@ -8,9 +8,8 @@ from helperFunctions import printElapsedTime as printElapsedTime
 from logisticRegression import getPCTRS
 
 
-def train(training_set, lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
+def train(lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
     print('Training linear bidding strategy model:')
-    trainingDF = pd.read_csv(training_set)
 
     advertisers = list(set(trainingDF['advertiser']))
 
@@ -45,14 +44,13 @@ def train(training_set, lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
     return optimalBaseBids
 
 
-def predict(base_bidprices, validation_set):
+def predict(base_bidprices):
     bids = {}
-    validationDF = pd.read_csv(validation_set)
 
     n = len(validationDF)
 
     print('Calculating pCTRs using logistic regression:')
-    pctrs = getPCTRS('train.csv', 'validation.csv')
+    pctrs = getPCTRS(trainingDF, validationDF)
 
     print('Calculating avgCTR:')
     imps = len(validationDF)  # imps = number of impressions
@@ -75,8 +73,11 @@ clearTerminal()
 start = time.time()
 print('Start')
 
-base_bidprices = train('train.csv')
-bids = predict(base_bidprices, 'validation.csv')
+trainingDF = pd.read_csv('train.csv')
+validationDF = pd.read_csv('validation.csv')
+
+base_bidprices = train()
+bids = predict(base_bidprices)
 evaluate(bids, 'validation.csv', 25000)
 
 end = time.time()

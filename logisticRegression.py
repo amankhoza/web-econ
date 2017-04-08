@@ -31,10 +31,10 @@ def getX(data_set):
     return x
 
 
-def getPCTRS(train, valid):
+def getPCTRS(training_set, validation_set):
     # Load datasets
-    training_set = pd.read_csv(train)
-    validation_set = pd.read_csv(valid)
+    # training_set = pd.read_csv(train)
+    # validation_set = pd.read_csv(valid)
 
     x_train = getX(training_set)
     x_valid = getX(validation_set)
