@@ -21,21 +21,21 @@ def train(training_set, lowerBidLimit=200, upperBidLimit=400, bidIncrement=1):
     optimalConstBids = {}
 
     for advertiser in advertisers:
-        highest = (advertiser, 1, 0, 0)  # tuple containing highest ctr and corresponding bid prices
+        highest = (advertiser, 0, 0, 1)  # tuple containing highest ctr and corresponding bid prices
         for bid in range(lowerBidLimit, upperBidLimit, bidIncrement):
             i += 1
             progress(i, n, '('+str(j)+'/'+str(len(advertisers))+')')
             rows = trainingDF[(trainingDF['advertiser']==advertiser) & (trainingDF['bidprice']<=bid)]
             imps = len(rows)  # imps = number of impressions
             clicks = len(rows[rows['click']==1])
-            price = sum(rows.bidprice.values)
+            price = sum(rows.payprice.values)
             if imps > 0:
                 ctr = clicks / imps  # ctr = click through rate
                 cpc = price / clicks # cost per click
             else:
                 ctr = 0
-                cpc = 0
-            if (ctr > 0) and (cpc / ctr) > (highest[3] / highest[1]):
+                cpc = 1
+            if (ctr > 0) and (ctr / cpc) > (highest[1] / highest[3]):
                 highest = (advertiser, ctr, bid, cpc)
         optimalConstBidPrices.append(highest)
         optimalConstBids[advertiser] = highest[2]
