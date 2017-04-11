@@ -53,7 +53,7 @@ def evaluateBiddingStrategy(bids, data_set, budget):
                 if clicked == 1:
                     clicks += 1
 
-    print(str(payPriceErrors)+' rows ignored becuase payprice > bidprice')
+    print(str(payPriceErrors)+' rows ignored because payprice > bidprice')
 
     if impressions > 0:
         ctr = clicks / impressions
