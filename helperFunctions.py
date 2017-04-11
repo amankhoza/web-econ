@@ -23,14 +23,14 @@ def progress(count, total, status='Complete'):
     sys.stdout.flush()
 
 
-def evaluateBiddingStrategy(bids, data_set, budget):
+def evaluateBiddingStrategy(bids, df, budget, silent):
     '''
     bids = dictionary (key=bidid, value=bidprice)
     data_set = path to csv
     budget = spending is capped at this value
     '''
-    print('Evaluating bidding strategy:')
-    df = pd.read_csv(data_set)
+    if silent == 1:
+        print('Evaluating bidding strategy:')
     spent, impressions, clicks = 0, 0, 0
 
     n = len(df)
@@ -38,7 +38,8 @@ def evaluateBiddingStrategy(bids, data_set, budget):
     payPriceErrors = 0
 
     for i in range(0, n):
-        progress(i+1, n)
+        if silent == 1:
+            progress(i+1, n)
         bidid = df.bidid.values[i]
         actualBidPrice = df.bidprice.values[i] / 1000
         payPrice = df.payprice.values[i] / 1000
@@ -53,7 +54,8 @@ def evaluateBiddingStrategy(bids, data_set, budget):
                 if clicked == 1:
                     clicks += 1
 
-    print(str(payPriceErrors)+' rows ignored because payprice > bidprice')
+    if silent == 1:
+        print(str(payPriceErrors)+' rows ignored because payprice > bidprice')
 
     if impressions > 0:
         ctr = clicks / impressions
@@ -65,6 +67,7 @@ def evaluateBiddingStrategy(bids, data_set, budget):
     else:
         cpc = 0
 
-    print('{:<12}\t{:<12}\t{:<12}\t{:<12}\t{:<12}'.format('spent', 'impressions', 'clicks', 'ctr', 'cpc'))
-    print('{:<12}\t{:<12}\t{:<12}\t{:.10f}\t{:.10f}'.format(spent, impressions, clicks, ctr, cpc))
+    if silent == 1:
+        print('{:<12}\t{:<12}\t{:<12}\t{:<12}\t{:<12}'.format('spent', 'impressions', 'clicks', 'ctr', 'cpc'))
+        print('{:<12}\t{:<12}\t{:<12}\t{:.10f}\t{:.10f}'.format(spent, impressions, clicks, ctr, cpc))
     return spent, impressions, clicks, ctr, cpc
