@@ -68,3 +68,10 @@ def evaluateBiddingStrategy(bids, data_set, budget):
     print('{:<12}\t{:<12}\t{:<12}\t{:<12}\t{:<12}'.format('spent', 'impressions', 'clicks', 'ctr', 'cpc'))
     print('{:<12}\t{:<12}\t{:<12}\t{:.10f}\t{:.10f}'.format(spent, impressions, clicks, ctr, cpc))
     return spent, impressions, clicks, ctr, cpc
+
+
+def transformCategoricalFeatures(data_set):
+    data_set['adexchange'] = data_set['adexchange'].map({'1': 1, '2': 2, '3': 3, '4': 4, 'null': 5})
+    data_set['slotformat'] = data_set['slotformat'].map({'0': 0, '1': 1, '5': 2, 'Na': 3})
+    data_set['slotvisibility'] = data_set['slotvisibility'].map({'0': 0, '1': 1, '2': 1, '255': 2, 'FifthView': 3, 'FirstView': 4, 'FourthView': 5, 'Na': 6, 'OtherView': 7, 'SecondView': 8, 'ThirdView': 9})
+    data_set['useragent'] = data_set['useragent'].map({'android_chrome': 0, 'android_firefox': 0, 'android_ie': 0, 'android_maxthon': 0, 'android_opera': 0, 'android_other': 0, 'android_safari': 0, 'android_sogou': 0, 'ios_other': 1, 'ios_safari': 1, 'linux_chrome': 2, 'linux_firefox': 2, 'linux_ie': 2, 'linux_opera': 2, 'linux_other': 2, 'linux_safari': 2, 'mac_chrome': 3, 'mac_firefox': 3, 'mac_ie': 3, 'mac_maxthon': 3, 'mac_opera': 3, 'mac_other': 3, 'mac_safari': 3, 'mac_sogou': 3, 'other_chrome': 4, 'other_firefox': 4, 'other_ie': 4, 'other_opera': 4, 'other_other': 4, 'other_safari': 4, 'windows_chrome': 5, 'windows_firefox': 5, 'windows_ie': 5, 'windows_maxthon': 5, 'windows_opera': 5, 'windows_other': 5, 'windows_safari': 5, 'windows_sogou': 5, 'windows_theworld': 5})
