@@ -131,12 +131,14 @@ for i in range(0, len(click_valid)):
 linear_scaled_bidprices = scaleBids(bidprice_pred, linear_scale_factors)
 logistic_scaled_bidprices = scaleBids(bidprice_pred, logistic_scale_factors)
 
+nb_unscaled_bids = dict(zip(bidid_valid, nb_pred))
 nb_scaled_bids = dict(zip(bidid_valid, nb_scaled_bidprices))
 
 unscaled_bids = dict(zip(bidid_valid, bidprice_pred))
 linear_scaled_bids = dict(zip(bidid_valid, linear_scaled_bidprices))
 logistic_scaled_bids = dict(zip(bidid_valid, logistic_scaled_bidprices))
 
+evaluate(nb_unscaled_bids, 'validation.csv', 6250)
 evaluate(nb_scaled_bids, 'validation.csv', 6250)
 
 evaluate(unscaled_bids, 'validation.csv', 6250)
