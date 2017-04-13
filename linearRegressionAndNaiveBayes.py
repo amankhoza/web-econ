@@ -110,7 +110,6 @@ print('Made logistic predictions')
 avgctr = avgCtr(validation_set)
 
 nb_scale_factors = scalePctrs(nb_pctrs, avgctr)
-nb_scaled_bidprices = scaleBids(nb_pred, nb_scale_factors)
 
 linear_scale_factors = scalePctrs(linear_pctrs, avgctr)
 logistic_scale_factors = scalePctrs(logistic_pctrs, avgctr)
@@ -131,6 +130,7 @@ for i in range(0, len(click_valid)):
 linear_scaled_bidprices = scaleBids(bidprice_pred, linear_scale_factors)
 logistic_scaled_bidprices = scaleBids(bidprice_pred, logistic_scale_factors)
 
+nb_scaled_bidprices = scaleBids(nb_pred, logistic_scale_factors)
 nb_unscaled_bids = dict(zip(bidid_valid, nb_pred))
 nb_scaled_bids = dict(zip(bidid_valid, nb_scaled_bidprices))
 
