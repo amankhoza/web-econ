@@ -5,6 +5,7 @@ from helperFunctions import evaluateBiddingStrategy as evaluate
 from helperFunctions import progress as progress
 from helperFunctions import clearTerminal as clearTerminal
 from helperFunctions import printElapsedTime as printElapsedTime
+from helperFunctions import transformCategoricalFeatures
 from logisticRegression import getPCTRS
 
 
@@ -76,9 +77,12 @@ print('Start')
 trainingDF = pd.read_csv('train.csv')
 validationDF = pd.read_csv('validation.csv')
 
+transformCategoricalFeatures(trainingDF)
+transformCategoricalFeatures(validationDF)
+
 base_bidprices = train()
 bids = predict(base_bidprices)
-evaluate(bids, 'validation.csv', 25000)
+evaluate(bids, 'validation.csv', 6250)
 
 end = time.time()
 printElapsedTime(start, end)
