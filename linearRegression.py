@@ -10,12 +10,16 @@ from helperFunctions import clearTerminal
 from helperFunctions import printElapsedTime
 from helperFunctions import evaluateBiddingStrategy as evaluate
 from helperFunctions import transformCategoricalFeatures
+from helperFunctions import avgCtr
+from helperFunctions import scalePctrs
+from helperFunctions import scaleBids
+from helperFunctions import clampScaleFactors
 
 '''
 Features chosen via LinearSVC see featureSelection.py
 '''
-CONTINOUS_FEATURES = ['slotprice', 'slotheight']
-CATEGORICAL_FEATURES = ['advertiser', 'weekday', 'hour', 'city', 'useragent', 'adexchange', 'slotvisibility'] # changed region to city
+CONTINOUS_FEATURES = ['slotprice', 'slotheight', 'slotwidth']
+CATEGORICAL_FEATURES = ['advertiser', 'weekday', 'region', 'useragent', 'adexchange', 'slotvisibility']
 
 
 def getX(data_set):
@@ -54,29 +58,6 @@ def logisticRegressionPctrs(x_train, y_train, x_pred):
     probabilities = logregressor.predict_proba(x_valid)
     logistic_pctrs = map(lambda x: x[1], probabilities)
     return logistic_pctrs
-
-
-def avgCtr(data_set):
-    clicks = len(data_set[data_set['click']==1])
-    imps = len(data_set)
-    avgctr = clicks/imps
-    return avgctr
-
-
-def scalePctrs(pctrs, avgctr):
-    return map(lambda x: x/avgctr, pctrs)
-
-
-def scaleBids(bids, scale_factors):
-    return [bid*scale_factor for bid, scale_factor in zip(bids, scale_factors)]
-
-
-def clamp(val, min_val, max_val):
-    return max(min(val, max_val), min_val)
-
-
-def clampScaleFactors(scale_factors):
-    return map(lambda x: clamp(x, 0, 1.05), scale_factors)
 
 
 clearTerminal()

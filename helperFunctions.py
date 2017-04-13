@@ -89,3 +89,26 @@ def getX(data_set, features):
             x = values
 
     return x
+
+
+def avgCtr(data_set):
+    clicks = len(data_set[data_set['click']==1])
+    imps = len(data_set)
+    avgctr = clicks/imps
+    return avgctr
+
+
+def scalePctrs(pctrs, avgctr):
+    return map(lambda x: x/avgctr, pctrs)
+
+
+def scaleBids(bids, scale_factors):
+    return [bid*scale_factor for bid, scale_factor in zip(bids, scale_factors)]
+
+
+def clamp(val, min_val, max_val):
+    return max(min(val, max_val), min_val)
+
+
+def clampScaleFactors(scale_factors):
+    return map(lambda x: clamp(x, 0, 1.05), scale_factors)
