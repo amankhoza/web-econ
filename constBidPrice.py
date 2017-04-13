@@ -71,7 +71,7 @@ print('Start')
 
 const_bidprices = train('train.csv')
 bids = predict(const_bidprices, 'validation.csv')
-evaluate(bids, 'validation.csv', 25000)
+evaluate(bids, 'validation.csv', 6250)
 
 end = time.time()
 printElapsedTime(start, end)
