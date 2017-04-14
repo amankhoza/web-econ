@@ -14,6 +14,7 @@ from helperFunctions import avgCtr
 from helperFunctions import scalePctrs
 from helperFunctions import scaleBids
 from helperFunctions import clampScaleFactors
+from math import ceil
 
 '''
 Features chosen via LinearSVC see featureSelection.py
@@ -134,7 +135,7 @@ if SOLUTION:
     out = open('testing_bidding_price.csv', 'w')
     out.write('bidid,bidprice\n')
     for i in range(0, len(linear_scaled_bidprices)):
-        out.write(str(bidid_valid[i])+','+str(linear_scaled_bidprices[i])+'\n')
+        out.write(str(bidid_valid[i])+','+str(ceil(linear_scaled_bidprices[i]))+'\n')
     out.flush()
     out.close()
 else:
