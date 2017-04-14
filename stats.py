@@ -120,9 +120,9 @@ for advertiser in advertisers:
     sys.stdout.flush()
 
 print('\nAvg CTR by device:')
-print('Advertiser\tWindows\t\tAndroid\t\tMac\t\tiOS\t\tOther')
+print('Advertiser\tAndroid\t\tiOS\t\tWindows\t\tLinux\t\tMac\t\tOther')
 
-devices = ['windows', 'android', 'mac', 'ios', 'other_']
+devices = ['android', 'ios', 'windows', 'linux', 'mac', 'other_']
 
 for advertiser in advertisers:
     sys.stdout.write('{}\t\t'.format(advertiser))
