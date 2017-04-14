@@ -115,7 +115,7 @@ def method(train, validation, silent):
 	bidprices = testFunc(trainResults, validation, silent)[1]
 
 	#saveToFile(testResults, 'data/submissions/test.csv')
-	return evaluate(bidprices, validation, 6250, silent)
+	return evaluate(bidprices, 'data/datasets/validation.csv', 6250)
 
 def run():
 	start = time.clock()
